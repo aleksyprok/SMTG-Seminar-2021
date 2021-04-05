@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 import os
+plt.rcParams.update({'font.size': 16})
 
 def exp_cap(z):
 	return np.exp(z * (z <= 100))
@@ -157,19 +157,19 @@ ky = np.sin(alpha) * k_par_p
 kx_crit_p = k_par_p * np.cos(alpha)
 kx_crit_m = np.sqrt(k_par_m ** 2 - ky ** 2)
 
-nz = 256
+nz = 512
 z_min = 0
 z_max = L0
 dz = (z_max - z_min) / (nz - 1)
 z = np.linspace(z_min, z_max, nz)
 
-nz_small = 256
+nz_small = 1024
 z_small_min = -2 * np.pi / k_par_m
 z_small_max =  2 * np.pi / k_par_m
 dz_small = (z_small_max - z_small_min) / (nz_small - 1)
 z_small = np.linspace(z_small_min, z_small_max, nz_small)
 
-nz_rhs = 128
+nz_rhs = 512
 z_rhs_min = 0
 z_rhs_max = 2 * np.pi / k_par_m
 dz_rhs = (z_rhs_max - z_rhs_min) / (nz_rhs - 1)
@@ -183,7 +183,7 @@ print(kx_array / kx_crit_m)
 
 fig = plt.figure()
 fig_size = fig.get_size_inches()
-fig_size[0] = 9.92 * 2
+fig_size[0] = 9.92 * 1.5
 fig_size[1] = 3.59 * 2.5
 fig.set_size_inches(fig_size)
 plt.subplots_adjust(left=0.125, bottom=0.1, right=0.9, top=0.9, wspace=0.2, hspace=0.2)
@@ -203,21 +203,42 @@ for kx in kx_array:
     ax.plot(z_small / (2 * np.pi / k_par_m), b_par_piecewise(z_small).real)
     ax.plot(z_rhs / (2 * np.pi / k_par_m), b_par_uniform(z_rhs).real)
     ax.set_ylim(-1, 1)
+    ax.set_title(r'Re$(b_{||}) / b_0$')
+    ax.get_xaxis().set_visible(False)
 
     ax = fig.add_subplot(222)
-    ax.plot(z, b_par_piecewise(z).real)
-    ax.plot(z, b_par_uniform(z).real)
+    ax.plot(z, b_par_piecewise(z).real, label = 'Chromosphere model')
+    ax.plot(z, b_par_uniform(z).real, label = 'Line-tied model')
     ax.set_ylim(-1, 1)
+    ax.set_title(r'Re$(b_{||}) / b_0$')
+    ax.get_xaxis().set_visible(False)
+    handles, labels = ax.get_legend_handles_labels()
+    lgd = ax.legend(handles, labels, bbox_to_anchor=(1.65,0.05))
+    ax.text(1.075, 0.2, \
+        	r'$k_x / k_{crit+} = $' + '{:.1e}'.format(kx / kx_crit_p), \
+            fontsize = 20, \
+        	transform=ax.transAxes)
 
     ax = fig.add_subplot(223)
-    ax.plot(z_small / (2 * np.pi / k_par_m), b_par_piecewise(z_small).imag)
-    ax.plot(z_rhs / (2 * np.pi / k_par_m), b_par_uniform(z_rhs).imag)
+    ax.plot(z_small / (2 * np.pi / k_par_m), b_par_piecewise(z_small).imag, label = 'Chromosphere model')
+    ax.plot(z_rhs / (2 * np.pi / k_par_m), b_par_uniform(z_rhs).imag, label = 'Line-tied model')
     ax.set_ylim(-1, 1)
+    ax.set_title(r'Im$(b_{||}) / b_0$')
+    ax.set_xlabel(r'$z\, /\, (2\pi / k_{||-})$')
 
     ax = fig.add_subplot(224)
-    ax.plot(z, b_par_piecewise(z).imag)
-    ax.plot(z, b_par_uniform(z).imag)
+    ax.plot(z, b_par_piecewise(z).imag, label = 'Chromosphere model')
+    ax.plot(z, b_par_uniform(z).imag, label = 'Line-tied model')
     ax.set_ylim(-1, 1)
+    ax.set_title(r'Im$(b_{||}) / b_0$')
+    ax.set_xlabel(r'$z\, /\, (2\pi / k_{||+})$')
+    ax.text(1.1, 0.45, \
+        	r'$v_{A-} / v_{A+} = $' + '{:.1e}'.format(vA_m / vA_p) + '\n' + \
+        	r'$k_{crit+} = k_{||+}\cos(\alpha)$'  '\n' + \
+        	r'$k_{crit-} / k_{crit+} = $' + '{:.1e}'.format(kx_crit_m / kx_crit_p) + '\n' + \
+            r'$\alpha = $' + '{:.3f}'.format(alpha / np.pi) + r'$\pi$' + '\n' \
+            r'$b_0 = B_0u_0 / v_{A+}$', \
+        	transform=ax.transAxes)
 
     fig.savefig(output_dir + '/' + '{:04d}'.format(n) + '.png', bbox_inches='tight')
     fig.clf()
