@@ -11,7 +11,7 @@ CONTAINS
 
     alpha = DATAN(0.25_num)
     k_par = 0.5_num * pi
-    kx = 1.0_num * k_par
+    kx = 0.0_num * k_par
     ny = 512
     nz = 256
     y_min = -4.0_num
@@ -50,6 +50,22 @@ CONTAINS
     END IF
 
   END FUNCTION half_cylinder
+
+  FUNCTION dome(y, z)
+
+    REAL(num), INTENT(IN) :: y, z
+    REAL(num) :: dome
+    REAL(num) :: r
+
+
+    r = DSQRT(y * y + z * z)
+    IF (DABS(r) .LE. 1) THEN
+      dome = DCOS(k_par * r) ** 2.0_num
+    ELSE
+      dome = 0.0_num
+    END IF
+
+  END FUNCTION dome
 
   FUNCTION u_ana(y, z, t)
 
@@ -97,61 +113,61 @@ CONTAINS
     Lz = z_max - z_min
     kz = 2.0_num * pi / Lz
 
-    DO iz = 0, nz
-      DO iy = 0, ny + 1
-        u_perp1( iy,iz) = u_ana(yc(iy), zb(iz), 0.0_num)
-        u_perp1m(iy,iz) = u_ana(yc(iy), zb(iz), -dt)
-      END DO
-    END DO
-
-    DO iz = 0, nz + 1
-      DO iy = 0, ny
-        u_perp2( iy,iz) = u_ana(yb(iy), zc(iz), 0.0_num)
-        u_perp2m(iy,iz) = u_ana(yb(iy), zc(iz), -dt)
-      END DO
-    END DO
-
-    DO iz = 1, nz
-      DO iy = 0, ny + 1
-        b_perp1( iy,iz) = b_ana(yc(iy), zc(iz), 0.0_num)
-        b_perp1m(iy,iz) = b_ana(yc(iy), zc(iz), -dt)
-      END DO
-    END DO
-
-    DO iz = 0, nz
-      DO iy = 0, ny
-        b_perp2( iy,iz) = b_ana(yb(iy), zb(iz), 0.0_num)
-        b_perp2m(iy,iz) = b_ana(yb(iy), zb(iz), -dt)
-      END DO
-    END DO
-
+    ! DO iz = 0, nz
+    !   DO iy = 0, ny + 1
+    !     u_perp1( iy,iz) = u_ana(yc(iy), zb(iz), 0.0_num)
+    !     u_perp1m(iy,iz) = u_ana(yc(iy), zb(iz), -dt)
+    !   END DO
+    ! END DO
+    !
     ! DO iz = 0, nz + 1
-    !   DO iy = 0, ny + 1
-    !     ux1( iy,iz) = u_ana(yc(iy), zc(iz), 0.0_num)
-    !     ux1m(iy,iz) = u_ana(yc(iy), zc(iz), -dt)
-    !   END DO
-    ! END DO
-    !
-    ! DO iz = 0, nz
     !   DO iy = 0, ny
-    !     ux2( iy,iz) = u_ana(yb(iy), zb(iz), 0.0_num)
-    !     ux2m(iy,iz) = u_ana(yb(iy), zb(iz), -dt)
-    !   END DO
-    ! END DO
-    !
-    ! DO iz = 0, nz
-    !   DO iy = 0, ny + 1
-    !     bx1( iy,iz) = b_ana(yc(iy), zb(iz), 0.0_num)
-    !     bx1m(iy,iz) = b_ana(yc(iy), zb(iz), -dt)
+    !     u_perp2( iy,iz) = u_ana(yb(iy), zc(iz), 0.0_num)
+    !     u_perp2m(iy,iz) = u_ana(yb(iy), zc(iz), -dt)
     !   END DO
     ! END DO
     !
     ! DO iz = 1, nz
-    !   DO iy = 0, ny
-    !     bx2( iy,iz) = b_ana(yb(iy), zc(iz), 0.0_num)
-    !     bx2m(iy,iz) = b_ana(yb(iy), zc(iz), -dt)
+    !   DO iy = 0, ny + 1
+    !     b_perp1( iy,iz) = b_ana(yc(iy), zc(iz), 0.0_num)
+    !     b_perp1m(iy,iz) = b_ana(yc(iy), zc(iz), -dt)
     !   END DO
     ! END DO
+    !
+    ! DO iz = 0, nz
+    !   DO iy = 0, ny
+    !     b_perp2( iy,iz) = b_ana(yb(iy), zb(iz), 0.0_num)
+    !     b_perp2m(iy,iz) = b_ana(yb(iy), zb(iz), -dt)
+    !   END DO
+    ! END DO
+
+    DO iz = 0, nz + 1
+      DO iy = 0, ny + 1
+        ux1( iy,iz) = dome(yc(iy) - 1.0_num, zc(iz) - 4.0_num)
+        ux1m(iy,iz) = dome(yc(iy) - 1.0_num, zc(iz) - 4.0_num)
+      END DO
+    END DO
+
+    DO iz = 0, nz
+      DO iy = 0, ny
+        ux2( iy,iz) = dome(yb(iy) - 1.0_num, zb(iz) - 4.0_num)
+        ux2m(iy,iz) = dome(yb(iy) - 1.0_num, zb(iz) - 4.0_num)
+      END DO
+    END DO
+
+    DO iz = 0, nz
+      DO iy = 0, ny + 1
+        bx1( iy,iz) = dome(yc(iy) - 1.0_num, zb(iz) - 4.0_num)
+        bx1m(iy,iz) = dome(yc(iy) - 1.0_num, zb(iz) - 4.0_num)
+      END DO
+    END DO
+
+    DO iz = 1, nz
+      DO iy = 0, ny
+        bx2( iy,iz) = dome(yb(iy) - 1.0_num, zc(iz) - 4.0_num)
+        bx2m(iy,iz) = dome(yb(iy) - 1.0_num, zc(iz) - 4.0_num)
+      END DO
+    END DO
 
   END SUBROUTINE set_initial_conditions
 

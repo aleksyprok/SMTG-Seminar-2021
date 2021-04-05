@@ -114,7 +114,7 @@ def get_max_min_val(var):
 
     return [max_var1, min_var1]
 
-data_dir = 'u_perp_wave_kx=1_alpha=tan_1_4'
+data_dir = 'ux_wave_kx=0_alpha=tan_1_4'
 getgrid(DIR = data_dir + '/Data/')
 
 file_number = len(glob.glob(data_dir + '/Data/ux1*'))
