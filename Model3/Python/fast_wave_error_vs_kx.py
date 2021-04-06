@@ -237,7 +237,7 @@ lines = [Line2D([0], [0], color = 'tab:blue'), \
 labels = [r'$k_{||-} = 10^{1}k_{||+}$', r'$k_{||-} = 10^{2}k_{||+}$', r'$k_{||-} = 10^{3}k_{||+}$']
 lgd = ax.legend(lines, labels, bbox_to_anchor=(0.475,-0.14))
 ax.text(0.5,-0.325, \
-    	r'$\alpha = \pi / 2$', \
+    	r'$\alpha = \pi / 4$', \
     	transform=ax.transAxes)
 
 fig.savefig('Figures/fast_wave_error_vs_kx.pdf', bbox_inches='tight')
