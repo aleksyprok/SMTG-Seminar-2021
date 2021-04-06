@@ -193,7 +193,7 @@ for ialpha in range(n_alpha):
     ln = ax.loglog([sqrt_arr_m[ialpha], sqrt_arr_m[ialpha]], [1e-12,1e12], linestyle = ':' , color = 'k')
 ax.set_ylim(yr)
 ax.set_xlabel(r'$k_x / k_{||+}$')
-ax.set_title(r'$\frac{\left|u_{\perp3} - u_{\perp3+}\right|}{\left|u_{\perp3+}\right|}$')
+ax.set_title(r'$\frac{\left|u_{\perp2} - u_{\perp2+}\right|}{u_0}$')
 
 ax = fig.add_subplot(122)
 
@@ -230,7 +230,7 @@ for ivA in range(n_vA):
 	ln = ax.loglog([sqrt_arr_m[ivA], sqrt_arr_m[ivA]], [1e-12,1e12], linestyle = ':' , color = clrs[ivA])
 ax.set_ylim(yr)
 ax.set_xlabel(r'$k_x / k_{||+}$')
-ax.set_title(r'$\frac{\left|u_{\perp3} - u_{\perp3+}\right|}{\left|u_{\perp3+}\right|}$')
+ax.set_title(r'$\frac{\left|u_{\perp2} - u_{\perp2+}\right|}{u_0}$')
 
 lines = [Line2D([0], [0], color = 'tab:blue'), \
          Line2D([0], [0], color = 'tab:orange'), \
